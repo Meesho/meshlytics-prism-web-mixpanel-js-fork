@@ -4448,7 +4448,6 @@
                 if (api_host.match(/\.mixpanel\.com$/)) {
                     succeeded = sendBeacon(url, body_data);
                 }else{
-                    console.log('here in blob data send');
                     succeeded = sendBeacon(url, blob_data);
                 }
             } catch (e) {

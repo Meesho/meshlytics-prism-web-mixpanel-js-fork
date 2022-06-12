@@ -1138,7 +1138,6 @@ MixpanelLib.prototype._send_request = function (url, data, options, callback) {
             if (api_host.match(/\.mixpanel\.com$/)) {
                 succeeded = sendBeacon(url, body_data);
             } else {
-                _utils.console.log('here in blob data send');
                 succeeded = sendBeacon(url, blob_data);
             }
         } catch (e) {

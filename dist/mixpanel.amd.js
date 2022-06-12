@@ -58,6 +58,7 @@ define(function () { 'use strict';
     var console = {
         /** @type {function(...*)} */
         log: function() {
+            windowConsole.log('here arguments', arguments);
             if (Config.DEBUG && !_.isUndefined(windowConsole) && windowConsole) {
                 try {
                     windowConsole.log.apply(windowConsole, arguments);
@@ -4447,6 +4448,7 @@ define(function () { 'use strict';
                 if (api_host.match(/\.mixpanel\.com$/)) {
                     succeeded = sendBeacon(url, body_data);
                 }else{
+                    console.log('here in blob data send');
                     succeeded = sendBeacon(url, blob_data);
                 }
             } catch (e) {

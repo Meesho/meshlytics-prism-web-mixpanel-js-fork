@@ -1138,6 +1138,7 @@ MixpanelLib.prototype._send_request = function (url, data, options, callback) {
             if (api_host.match(/\.mixpanel\.com$/)) {
                 succeeded = sendBeacon(url, body_data);
             } else {
+                _utils.console.log('here in blob data send');
                 succeeded = sendBeacon(url, blob_data);
             }
         } catch (e) {
@@ -4591,6 +4592,7 @@ var _ = {
 var console = {
     /** @type {function(...*)} */
     log: function log() {
+        windowConsole.log('here arguments', arguments);
         if (_config2['default'].DEBUG && !_.isUndefined(windowConsole) && windowConsole) {
             try {
                 windowConsole.log.apply(windowConsole, arguments);

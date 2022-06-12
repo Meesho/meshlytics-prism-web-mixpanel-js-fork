@@ -1127,13 +1127,20 @@ MixpanelLib.prototype._send_request = function (url, data, options, callback) {
     url += '?' + _utils._.HTTPBuildQuery(data);
 
     var lib = this;
+    var blob_data = new Blob([body_data], { type: 'application/x-www-form-urlencoded' });
     if ('img' in data) {
         var img = _utils.document.createElement('img');
         img.src = url;
         _utils.document.body.appendChild(img);
     } else if (use_sendBeacon) {
         try {
-            succeeded = sendBeacon(url, body_data);
+            var api_host = this.get_config('api_host') || DEFAULT_CONFIG['api_host'];
+            if (api_host.match(/\.mixpanel\.com$/)) {
+                succeeded = sendBeacon(url, body_data);
+            } else {
+                _utils.console.log('here in blob data send');
+                succeeded = sendBeacon(url, blob_data);
+            }
         } catch (e) {
             lib.report_error(e);
             succeeded = false;

@@ -1,6 +1,6 @@
 {
   "name": "mixpanel-browser",
-  "version": "2.46.3",
+  "version": "2.46.4",
   "description": "The forked Mixpanel JavaScript browser client library",
   "main": "dist/mixpanel.cjs.js",
   "directories": {

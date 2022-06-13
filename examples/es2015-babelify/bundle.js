@@ -894,6 +894,7 @@ MixpanelLib.prototype.init = function (token, config, name) {
 // init(...) method sets up a new library and calls _init on it.
 //
 MixpanelLib.prototype._init = function (token, config, name) {
+    _utils.console.log('here in _init function in forked mixpanelsdk codebase, todo remove later');
     config = config || {};
 
     this['__loaded'] = true;
@@ -1138,7 +1139,7 @@ MixpanelLib.prototype._send_request = function (url, data, options, callback) {
             if (api_host.match(/\.mixpanel\.com$/)) {
                 succeeded = sendBeacon(url, body_data);
             } else {
-                _utils.console.log('here in blob data send');
+                _utils.console.log('here in blob data send, todo remove later');
                 succeeded = sendBeacon(url, blob_data);
             }
         } catch (e) {

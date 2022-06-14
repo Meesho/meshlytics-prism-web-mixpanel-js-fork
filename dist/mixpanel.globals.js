@@ -4213,7 +4213,7 @@
     // init(...) method sets up a new library and calls _init on it.
     //
     MixpanelLib.prototype._init = function(token, config, name) {
-        console.log('here in _init function in forked mixpanelsdk codebase, todo remove later');
+        console.log('here in _init 2 function in forked mixpanelsdk codebase, todo remove later');
         config = config || {};
 
         this['__loaded'] = true;

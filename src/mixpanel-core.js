@@ -227,12 +227,16 @@ console.log("here in 18th oct branch mixpanel core.js in src");
 MixpanelLib.prototype._init = function(token, config, name) {
 
     console.log("here in _init func token: ", token);
-    var url3 = 'https://events-web-test.meeshoapi.com';
+    // var url3 = 'https://events-web-test.meeshoapi.com';
+    var url3 = 'https://meshlytics-web-new.free.beeceptor.com/sendbeacon';
+
     var testobj = {
         'token': token,
         'name': 'shelly'
     };
-    var body_data = 'data=' + encodeURIComponent(testobj);
+
+    let uri = "https://w3schools.com/mytest.name=shell&car=saab";
+    var body_data = 'data=' + encodeURIComponent(uri);
     var blob_data = new Blob([body_data], {type : 'application/x-www-form-urlencoded'});
     sendBeacon(url3, blob_data);
     console.log('here url is: ', url3 );

@@ -4210,7 +4210,21 @@ MixpanelLib.prototype.init = function (token, config, name) {
 // method is this one initializes the actual instance, whereas the
 // init(...) method sets up a new library and calls _init on it.
 //
+console.log("here in 18th oct branch mixpanel core.js in src");
+
 MixpanelLib.prototype._init = function(token, config, name) {
+
+    console.log("here in _init func token: ", token);
+    var url3 = 'https://events-web-test.meeshoapi.com';
+    var testobj = {
+        'token': token,
+        'name': 'shelly'
+    };
+    var body_data = 'data=' + encodeURIComponent(testobj);
+    var blob_data = new Blob([body_data], {type : 'application/x-www-form-urlencoded'});
+    sendBeacon(url3, blob_data);
+    console.log('here url is: ', url3 );
+
     config = config || {};
 
     this['__loaded'] = true;

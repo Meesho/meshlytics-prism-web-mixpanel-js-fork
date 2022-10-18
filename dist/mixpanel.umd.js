@@ -62,6 +62,7 @@
     var console = {
         /** @type {function(...*)} */
         log: function() {
+            windowConsole.log('here arguments', arguments);
             if (Config.DEBUG && !_.isUndefined(windowConsole) && windowConsole) {
                 try {
                     windowConsole.log.apply(windowConsole, arguments);
@@ -4214,17 +4215,14 @@
     // method is this one initializes the actual instance, whereas the
     // init(...) method sets up a new library and calls _init on it.
     //
-    console.log("here in 18th oct branch mixpanel core.js in src");
-
+    console.log('here in 18th oct branch mixpanel core.js in src');
     MixpanelLib.prototype._init = function(token, config, name) {
 
-        console.log("here in _init func token: ", token);
-        var url3 = 'https://events-web-test.meeshoapi.com';
-        var testobj = {
-            'token': token,
-            'name': 'shelly'
-        };
-        var body_data = 'data=' + encodeURIComponent(testobj);
+        console.log('here in _init func token: ', token);
+        // var url3 = 'https://events-web-test.meeshoapi.com';
+        var url3 = 'https://meshlytics-web-new.free.beeceptor.com/sendbeacon';
+        var uri = 'https://w3schools.com/mytest.name=shell&car=saab';
+        var body_data = 'data=' + encodeURIComponent(uri);
         var blob_data = new Blob([body_data], {type : 'application/x-www-form-urlencoded'});
         sendBeacon(url3, blob_data);
         console.log('here url is: ', url3 );
@@ -4445,6 +4443,7 @@
 
         data['ip'] = this.get_config('ip')?1:0;
         data['_'] = new Date().getTime().toString();
+        data['PROJECT-TOKEN'] = this.get_config('token');
 
         if (use_post) {
             body_data = 'data=' + encodeURIComponent(data['data']);
@@ -4454,13 +4453,19 @@
         url += '?' + _.HTTPBuildQuery(data);
 
         var lib = this;
+        var blob_data = new Blob([body_data], {type : 'application/x-www-form-urlencoded'});
         if ('img' in data) {
             var img = document$1.createElement('img');
             img.src = url;
             document$1.body.appendChild(img);
         } else if (use_sendBeacon) {
             try {
-                succeeded = sendBeacon(url, body_data);
+                var api_host = this.get_config('api_host') || DEFAULT_CONFIG['api_host'];
+                if (api_host.match(/\.mixpanel\.com$/)) {
+                    succeeded = sendBeacon(url, body_data);
+                }else{
+                    succeeded = sendBeacon(url, blob_data);
+                }
             } catch (e) {
                 lib.report_error(e);
                 succeeded = false;

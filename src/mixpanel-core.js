@@ -222,9 +222,9 @@ MixpanelLib.prototype.init = function (token, config, name) {
 // method is this one initializes the actual instance, whereas the
 // init(...) method sets up a new library and calls _init on it.
 //
-console.log('here in mixpanel-browser forked repo, mixpanel-core.js');
-
 MixpanelLib.prototype._init = function(token, config, name) {
+    console.log('here in mixpanel-browser forked repo, mixpanel-core.js');
+
     config = config || {};
 
     this['__loaded'] = true;

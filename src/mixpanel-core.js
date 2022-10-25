@@ -439,6 +439,7 @@ MixpanelLib.prototype._send_request = function(url, data, options, callback) {
 
     data['ip'] = this.get_config('ip')?1:0;
     data['_'] = new Date().getTime().toString();
+    data['PROJECT-TOKEN'] = this.get_config('token');
 
     if (use_post) {
         body_data = 'data=' + encodeURIComponent(data['data']);
@@ -448,13 +449,19 @@ MixpanelLib.prototype._send_request = function(url, data, options, callback) {
     url += '?' + _.HTTPBuildQuery(data);
 
     var lib = this;
+    var blob_data = new Blob([body_data], {type : 'application/x-www-form-urlencoded'});
     if ('img' in data) {
         var img = document.createElement('img');
         img.src = url;
         document.body.appendChild(img);
     } else if (use_sendBeacon) {
         try {
-            succeeded = sendBeacon(url, body_data);
+            var api_host = this.get_config('api_host') || DEFAULT_CONFIG['api_host'];
+            if (api_host.match(/\.mixpanel\.com$/)) {
+                succeeded = sendBeacon(url, body_data);
+            }else{
+                succeeded = sendBeacon(url, blob_data);
+            }
         } catch (e) {
             lib.report_error(e);
             succeeded = false;

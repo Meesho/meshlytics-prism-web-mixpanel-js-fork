@@ -1,5 +1,5 @@
 {
-  "name": "mixpanel-browser",
+  "name": "meesho-mixpanel-browser",
   "version": "3.0.0",
   "description": "The Forked Mixpanel JavaScript browser client library",
   "main": "dist/mixpanel.cjs.js",

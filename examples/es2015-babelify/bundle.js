@@ -745,12 +745,13 @@ var ENQUEUE_REQUESTS = !USE_XHR && _utils.userAgent.indexOf('MSIE') === -1 && _u
 
 // save reference to navigator.sendBeacon so it can be minified
 var sendBeacon = null;
-if (_utils.navigator['sendBeacon']) {
-    sendBeacon = function () {
-        // late reference to navigator.sendBeacon to allow patching/spying
-        return _utils.navigator['sendBeacon'].apply(_utils.navigator, arguments);
-    };
-}
+// Commenting the code below because sendBeacon is causing unnecessary duplicates on the server
+// if (navigator['sendBeacon']) {
+//     sendBeacon = function() {
+//         // late reference to navigator.sendBeacon to allow patching/spying
+//         return navigator['sendBeacon'].apply(navigator, arguments);
+//     };
+// }
 
 /*
  * Module-level globals
@@ -946,21 +947,21 @@ MixpanelLib.prototype._init = function (token, config, name) {
                 // These events fire when the user clicks away from the current page/tab, so will occur
                 // more frequently than page unload, but are the only mechanism currently for capturing
                 // this scenario somewhat reliably.
-                var flush_on_unload = _utils._.bind(function () {
-                    if (!this.request_batchers.events.stopped) {
-                        this.request_batchers.events.flush({ unloading: true });
-                    }
-                }, this);
-                _utils.window.addEventListener('pagehide', function (ev) {
-                    if (ev['persisted']) {
-                        flush_on_unload();
-                    }
-                });
-                _utils.window.addEventListener('visibilitychange', function () {
-                    if (_utils.document['visibilityState'] === 'hidden') {
-                        flush_on_unload();
-                    }
-                });
+                // var flush_on_unload = _.bind(function() {
+                //     if (!this.request_batchers.events.stopped) {
+                //         this.request_batchers.events.flush({unloading: true});
+                //     }
+                // }, this);
+                // window.addEventListener('pagehide', function(ev) {
+                //     if (ev['persisted']) {
+                //         flush_on_unload();
+                //     }
+                // });
+                // window.addEventListener('visibilitychange', function() {
+                //     if (document['visibilityState'] === 'hidden') {
+                //         flush_on_unload();
+                //     }
+                // });
             }
         }
     }
@@ -1128,105 +1129,105 @@ MixpanelLib.prototype._send_request = function (url, data, options, callback) {
     url += '?' + _utils._.HTTPBuildQuery(data);
 
     var lib = this;
-    var blob_data = new Blob([body_data], { type: 'application/x-www-form-urlencoded' });
+    // var blob_data = new Blob([body_data], {type : 'application/x-www-form-urlencoded'});
     if ('img' in data) {
         var img = _utils.document.createElement('img');
         img.src = url;
         _utils.document.body.appendChild(img);
     } else if (use_sendBeacon) {
-        try {
-            var api_host = this.get_config('api_host') || DEFAULT_CONFIG['api_host'];
-            if (api_host.match(/\.mixpanel\.com$/)) {
-                succeeded = sendBeacon(url, body_data);
-            } else {
-                succeeded = sendBeacon(url, blob_data);
-            }
-        } catch (e) {
-            lib.report_error(e);
-            succeeded = false;
-        }
-        try {
-            if (callback) {
-                callback(succeeded ? 1 : 0);
-            }
-        } catch (e) {
-            lib.report_error(e);
-        }
+        // try {
+        //     var api_host = this.get_config('api_host') || DEFAULT_CONFIG['api_host'];
+        //     if (api_host.match(/\.mixpanel\.com$/)) {
+        //         succeeded = sendBeacon(url, body_data);
+        //     }else{
+        //         succeeded = sendBeacon(url, blob_data);
+        //     }
+        // } catch (e) {
+        //     lib.report_error(e);
+        //     succeeded = false;
+        // }
+        // try {
+        //     if (callback) {
+        //         callback(1);
+        //     }
+        // } catch (e) {
+        //     lib.report_error(e);
+        // }
     } else if (USE_XHR) {
-        try {
-            var req = new XMLHttpRequest();
-            req.open(options.method, url, true);
+            try {
+                var req = new XMLHttpRequest();
+                req.open(options.method, url, true);
 
-            var headers = this.get_config('xhr_headers');
-            if (use_post) {
-                headers['Content-Type'] = 'application/x-www-form-urlencoded';
-            }
-            _utils._.each(headers, function (headerValue, headerName) {
-                req.setRequestHeader(headerName, headerValue);
-            });
+                var headers = this.get_config('xhr_headers');
+                if (use_post) {
+                    headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                }
+                _utils._.each(headers, function (headerValue, headerName) {
+                    req.setRequestHeader(headerName, headerValue);
+                });
 
-            if (options.timeout_ms && typeof req.timeout !== 'undefined') {
-                req.timeout = options.timeout_ms;
-                var start_time = new Date().getTime();
-            }
+                if (options.timeout_ms && typeof req.timeout !== 'undefined') {
+                    req.timeout = options.timeout_ms;
+                    var start_time = new Date().getTime();
+                }
 
-            // send the mp_optout cookie
-            // withCredentials cannot be modified until after calling .open on Android and Mobile Safari
-            req.withCredentials = true;
-            req.onreadystatechange = function () {
-                if (req.readyState === 4) {
-                    // XMLHttpRequest.DONE == 4, except in safari 4
-                    if (req.status === 200) {
-                        if (callback) {
-                            if (verbose_mode) {
-                                var response;
-                                try {
-                                    response = _utils._.JSONDecode(req.responseText);
-                                } catch (e) {
-                                    lib.report_error(e);
-                                    if (options.ignore_json_errors) {
-                                        response = req.responseText;
-                                    } else {
-                                        return;
+                // send the mp_optout cookie
+                // withCredentials cannot be modified until after calling .open on Android and Mobile Safari
+                req.withCredentials = true;
+                req.onreadystatechange = function () {
+                    if (req.readyState === 4) {
+                        // XMLHttpRequest.DONE == 4, except in safari 4
+                        if (req.status === 200) {
+                            if (callback) {
+                                if (verbose_mode) {
+                                    var response;
+                                    try {
+                                        response = _utils._.JSONDecode(req.responseText);
+                                    } catch (e) {
+                                        lib.report_error(e);
+                                        if (options.ignore_json_errors) {
+                                            response = req.responseText;
+                                        } else {
+                                            return;
+                                        }
                                     }
+                                    callback(response);
+                                } else {
+                                    callback(Number(req.responseText));
                                 }
-                                callback(response);
-                            } else {
-                                callback(Number(req.responseText));
                             }
-                        }
-                    } else {
-                        var error;
-                        if (req.timeout && !req.status && new Date().getTime() - start_time >= req.timeout) {
-                            error = 'timeout';
                         } else {
-                            error = 'Bad HTTP status: ' + req.status + ' ' + req.statusText;
-                        }
-                        lib.report_error(error);
-                        if (callback) {
-                            if (verbose_mode) {
-                                callback({ status: 0, error: error, xhr_req: req });
+                            var error;
+                            if (req.timeout && !req.status && new Date().getTime() - start_time >= req.timeout) {
+                                error = 'timeout';
                             } else {
-                                callback(0);
+                                error = 'Bad HTTP status: ' + req.status + ' ' + req.statusText;
+                            }
+                            lib.report_error(error);
+                            if (callback) {
+                                if (verbose_mode) {
+                                    callback({ status: 0, error: error, xhr_req: req });
+                                } else {
+                                    callback(0);
+                                }
                             }
                         }
                     }
-                }
-            };
-            req.send(body_data);
-        } catch (e) {
-            lib.report_error(e);
-            succeeded = false;
+                };
+                req.send(body_data);
+            } catch (e) {
+                lib.report_error(e);
+                succeeded = false;
+            }
+        } else {
+            var script = _utils.document.createElement('script');
+            script.type = 'text/javascript';
+            script.async = true;
+            script.defer = true;
+            script.src = url;
+            var s = _utils.document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(script, s);
         }
-    } else {
-        var script = _utils.document.createElement('script');
-        script.type = 'text/javascript';
-        script.async = true;
-        script.defer = true;
-        script.src = url;
-        var s = _utils.document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(script, s);
-    }
 
     return succeeded;
 };

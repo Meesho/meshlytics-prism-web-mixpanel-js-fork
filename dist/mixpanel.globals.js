@@ -4062,12 +4062,13 @@
 
     // save reference to navigator.sendBeacon so it can be minified
     var sendBeacon = null;
-    if (navigator['sendBeacon']) {
-        sendBeacon = function() {
-            // late reference to navigator.sendBeacon to allow patching/spying
-            return navigator['sendBeacon'].apply(navigator, arguments);
-        };
-    }
+    // Commenting the code below because sendBeacon is causing unnecessary duplicates on the server
+    // if (navigator['sendBeacon']) {
+    //     sendBeacon = function() {
+    //         // late reference to navigator.sendBeacon to allow patching/spying
+    //         return navigator['sendBeacon'].apply(navigator, arguments);
+    //     };
+    // }
 
     /*
      * Module-level globals
@@ -4264,21 +4265,21 @@
                     // These events fire when the user clicks away from the current page/tab, so will occur
                     // more frequently than page unload, but are the only mechanism currently for capturing
                     // this scenario somewhat reliably.
-                    var flush_on_unload = _.bind(function() {
-                        if (!this.request_batchers.events.stopped) {
-                            this.request_batchers.events.flush({unloading: true});
-                        }
-                    }, this);
-                    window$1.addEventListener('pagehide', function(ev) {
-                        if (ev['persisted']) {
-                            flush_on_unload();
-                        }
-                    });
-                    window$1.addEventListener('visibilitychange', function() {
-                        if (document$1['visibilityState'] === 'hidden') {
-                            flush_on_unload();
-                        }
-                    });
+                    // var flush_on_unload = _.bind(function() {
+                    //     if (!this.request_batchers.events.stopped) {
+                    //         this.request_batchers.events.flush({unloading: true});
+                    //     }
+                    // }, this);
+                    // window.addEventListener('pagehide', function(ev) {
+                    //     if (ev['persisted']) {
+                    //         flush_on_unload();
+                    //     }
+                    // });
+                    // window.addEventListener('visibilitychange', function() {
+                    //     if (document['visibilityState'] === 'hidden') {
+                    //         flush_on_unload();
+                    //     }
+                    // });
                 }
             }
         }
@@ -4438,30 +4439,30 @@
         url += '?' + _.HTTPBuildQuery(data);
 
         var lib = this;
-        var blob_data = new Blob([body_data], {type : 'application/x-www-form-urlencoded'});
+        // var blob_data = new Blob([body_data], {type : 'application/x-www-form-urlencoded'});
         if ('img' in data) {
             var img = document$1.createElement('img');
             img.src = url;
             document$1.body.appendChild(img);
         } else if (use_sendBeacon) {
-            try {
-                var api_host = this.get_config('api_host') || DEFAULT_CONFIG['api_host'];
-                if (api_host.match(/\.mixpanel\.com$/)) {
-                    succeeded = sendBeacon(url, body_data);
-                }else{
-                    succeeded = sendBeacon(url, blob_data);
-                }
-            } catch (e) {
-                lib.report_error(e);
-                succeeded = false;
-            }
-            try {
-                if (callback) {
-                    callback(succeeded ? 1 : 0);
-                }
-            } catch (e) {
-                lib.report_error(e);
-            }
+            // try {
+            //     var api_host = this.get_config('api_host') || DEFAULT_CONFIG['api_host'];
+            //     if (api_host.match(/\.mixpanel\.com$/)) {
+            //         succeeded = sendBeacon(url, body_data);
+            //     }else{
+            //         succeeded = sendBeacon(url, blob_data);
+            //     }
+            // } catch (e) {
+            //     lib.report_error(e);
+            //     succeeded = false;
+            // }
+            // try {
+            //     if (callback) {
+            //         callback(1);
+            //     }
+            // } catch (e) {
+            //     lib.report_error(e);
+            // }
         } else if (USE_XHR) {
             try {
                 var req = new XMLHttpRequest();

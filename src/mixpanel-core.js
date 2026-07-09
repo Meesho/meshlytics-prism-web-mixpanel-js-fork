@@ -632,6 +632,8 @@ MixpanelLib.prototype.init_batchers = function() {
                         return this._run_hook('before_send_' + attrs.type, item);
                     }, this),
                     errorReporter: this.get_config('error_reporter'),
+                    deliveryMetricsReporter: this.get_config('delivery_metrics_reporter'),
+                    queueType: attrs.type,
                     stopAllBatchingFunc: _.bind(this.stop_batch_senders, this)
                 }
             );

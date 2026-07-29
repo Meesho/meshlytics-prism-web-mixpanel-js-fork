@@ -221,6 +221,13 @@ RequestBatcher.prototype.flush = function(options) {
         if (options.unloading) {
             requestOptions.transport = 'sendBeacon';
         }
+        // Exit-flush (tail-loss recovery): send via fetch(keepalive) so the request
+        // survives tab-hide/unload AND still returns a response — the normal
+        // success path then removes items from the queue only on a 2xx (acked),
+        // avoiding the fire-and-forget duplicate problem of sendBeacon.
+        if (options.useKeepalive) {
+            requestOptions.transport = 'keepalive';
+        }
         logger.log('MIXPANEL REQUEST:', dataForRequest);
         this.sendRequest(dataForRequest, requestOptions, batchSendCallback);
 

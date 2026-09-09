@@ -1,44 +1,19 @@
 arch: amd64
 bu: central
 build_tool: docker
-deployArgo: true
-dockerBuildVersion: node-24
+deployArgo: false
+deployment_order: null
+dockerBuildVersion: node-24.10
+keep_package_lock: true
 maintainer: aishvary.singh@meesho.com
-modules:
-  - module_less
 notify_channel: sentry-kaizen
-orgs:
-  - bu: central
-    environment:
-      ftr:
-        deployment_order:
-          - mixpanel-browser
-        include_s3_files: '*.js'
-        local_path: dist/
-        push_to_s3: false
-        s3_path: gcs-supl-xsupl-chunks-dev/${POD_NAMESPACE}/services/
-      int:
-        deployment_order:
-          - mixpanel-browser
-        include_s3_files: '*.js'
-        local_path: dist/
-        push_to_s3: false
-        s3_path: gcs-supl-xsupl-chunks-dev/${POD_NAMESPACE}/services/
-      prd:
-        deployment_order:
-          - mixpanel-browser
-        include_s3_files: '*.js'
-        local_path: dist/
-        push_to_s3: false
-        s3_path: gcs-supl-xsupl-chunks-dev/${POD_NAMESPACE}/services/
-      stg:
-        deployment_order:
-          - mixpanel-browser
-        include_s3_files: '*.js'
-        local_path: dist/
-        push_to_s3: false
-        s3_path: gcs-supl-xsupl-chunks-dev/${POD_NAMESPACE}/services/
-    org: meesho
 repo_name: meshlytics-prism-web-mixpanel-js-fork
+repo_type: library
 skip_sonar: true
 team: shared
+publish_node_package:
+  enabled: true
+  package_dir: "."
+  package_manager: npm
+  gcp_project_id: meesho-devops-admin-0622
+  publish_dry_run: false

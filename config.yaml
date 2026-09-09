@@ -1,0 +1,44 @@
+arch: amd64
+bu: central
+build_tool: docker
+deployArgo: true
+dockerBuildVersion: node-24
+environment:
+    ftr:
+        acl: null
+        deployment_order: null
+        distribution_id: null
+        include_s3_files: null
+        local_path: null
+        push_to_s3: null
+        s3_path: null
+    int:
+        acl: null
+        deployment_order: null
+        distribution_id: null
+        include_s3_files: null
+        local_path: null
+        push_to_s3: null
+        s3_path: null
+    prd:
+        acl: null
+        deployment_order: null
+        distribution_id: null
+        include_s3_files: null
+        local_path: null
+        push_to_s3: null
+        s3_path: null
+    stg:
+        acl: null
+        deployment_order: null
+        distribution_id: null
+        include_s3_files: null
+        local_path: null
+        push_to_s3: null
+        s3_path: null
+maintainer: aishvary.singh@meesho.com
+modules:
+    - module_less
+repo_name: meshlytics-prism-web-mixpanel-js-fork
+skip_sonar: true
+team: shared

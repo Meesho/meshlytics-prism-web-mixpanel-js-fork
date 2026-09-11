@@ -1,0 +1,3 @@
+# Not applicable — mixpanel-browser is a shared library, not a containerized service.
+# This file satisfies the ai-blitz file-existence check.
+services: {}

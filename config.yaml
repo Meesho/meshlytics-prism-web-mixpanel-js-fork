@@ -1,0 +1,19 @@
+arch: amd64
+bu: central
+build_tool: docker
+deployArgo: false
+deployment_order: null
+dockerBuildVersion: node-24.10
+keep_package_lock: true
+maintainer: aishvary.singh@meesho.com
+notify_channel: sentry-kaizen
+repo_name: meshlytics-prism-web-mixpanel-js-fork
+repo_type: library
+skip_sonar: true
+team: shared
+publish_node_package:
+  enabled: true
+  package_dir: "."
+  package_manager: npm
+  gcp_project_id: meesho-devops-admin-0622
+  publish_dry_run: false

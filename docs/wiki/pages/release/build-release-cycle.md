@@ -1,6 +1,6 @@
-<!-- m-wiki: type=concept slug=build-release-cycle topic=release base-sha=19b2bed8917f generated-at=2026-09-11T00:00:00+00:00 sources=[docs/tribal-knowledge.md] -->
+<!-- m-wiki: type=concept slug=build-release-cycle topic=release base-sha=e998041ec6f4 generated-at=2026-09-11T00:00:00+00:00 sources=[docs/tribal-knowledge.md] -->
 
-> Generated 2026-09-11 at base-sha 19b2bed8917f. Type: concept. 1 source.
+> Generated 2026-09-11 at base-sha e998041ec6f4. Type: concept. 1 source.
 
 # Build & Release Cycle
 
@@ -11,7 +11,7 @@ This library ships as a committed-dist npm package. There is no build step durin
 | Symbol | File |
 |---|---|
 | Build script | `build.sh` |
-| Build npm script | `package.json:46` |
+| Build npm script | `package.json:16` |
 | Ringmaster config | `repository.yaml` |
 
 ## Why this design

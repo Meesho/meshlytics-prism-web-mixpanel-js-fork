@@ -1,24 +1,9 @@
 {
-  "built_against_sha": "19b2bed8917f",
+  "built_against_sha": "e998041ec6f4",
   "built_at": "2026-09-11T08:08:25+00:00",
   "by_file": {
-    "examples/commonjs-browserify/package.json": {
-      "46": [
-        "docs/wiki/pages/release/build-release-cycle.md"
-      ]
-    },
-    "examples/es2015-babelify/package.json": {
-      "46": [
-        "docs/wiki/pages/release/build-release-cycle.md"
-      ]
-    },
-    "examples/umd-webpack/package.json": {
-      "46": [
-        "docs/wiki/pages/release/build-release-cycle.md"
-      ]
-    },
     "package.json": {
-      "46": [
+      "16": [
         "docs/wiki/pages/release/build-release-cycle.md"
       ]
     },
@@ -201,7 +186,7 @@
       "src/mixpanel-core.js:1588"
     ],
     "docs/wiki/pages/release/build-release-cycle.md": [
-      "package.json:46"
+      "package.json:16"
     ]
   },
   "schema_version": "v0.8.0"

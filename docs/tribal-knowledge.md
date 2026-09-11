@@ -96,7 +96,7 @@ Unit tests cover the custom Meesho hooks:
   count, status}` per response branch for the `deliveryMetricsReporter` hook.
 
 Run tests: `npm test` (lint + unit). Browser integration tests require starting
-`npm run integration_test` and visiting `localhost:3000/tests/`.
+`npm run integration_test` and visiting `tests/`.
 
 There are no automated browser integration tests in CI. The integration test
 suite must be run manually before cutting a release that changes request-path

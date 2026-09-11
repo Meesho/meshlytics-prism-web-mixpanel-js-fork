@@ -1,0 +1,7 @@
+# Not applicable — mixpanel-browser is a shared library with no HTTP API.
+openapi: "3.0.0"
+info:
+  title: "mixpanel-browser"
+  version: "0.0.0"
+  description: "Not applicable. This package is a shared library with no HTTP API."
+paths: {}

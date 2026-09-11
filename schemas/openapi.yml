@@ -1,7 +1,20 @@
-# Not applicable — mixpanel-browser is a shared library with no HTTP API.
-openapi: "3.0.0"
+# Not applicable — mixpanel-browser is a shared browser client library with no production HTTP API.
+# testServer.js (GET /tests/cookie_included/:cookieName, GET /) is a local test utility
+# (port 3000) used by `npm run integration_test` and is explicitly excluded from this spec.
+openapi: "3.1.0"
 info:
   title: "mixpanel-browser"
-  version: "0.0.0"
-  description: "Not applicable. This package is a shared library with no HTTP API."
+  version: "3.1.2"
+  description: >
+    Meesho fork of the Mixpanel JavaScript browser client library.
+    This package is distributed as an npm library and has no production HTTP API surface.
+    It is consumed by browser-side code to instrument analytics events to Mixpanel.
+
+    testServer.js is a development-only Express server (port 3000) used exclusively for
+    local integration testing — its routes (GET /tests/cookie_included/:cookieName, GET /)
+    are not part of any deployed API and are intentionally absent from this spec.
+  contact:
+    email: "aishvary.singh@meesho.com"
+  license:
+    name: "Apache-2.0"
 paths: {}

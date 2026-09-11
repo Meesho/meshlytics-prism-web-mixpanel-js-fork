@@ -1304,6 +1304,8 @@ MixpanelLib.prototype.init_batchers = function () {
                     return this._run_hook('before_send_' + attrs.type, item);
                 }, this),
                 errorReporter: this.get_config('error_reporter'),
+                deliveryMetricsReporter: this.get_config('delivery_metrics_reporter'),
+                queueType: attrs.type,
                 stopAllBatchingFunc: _utils._.bind(this.stop_batch_senders, this)
             });
         }, this);
@@ -3852,6 +3854,10 @@ var RequestBatcher = function RequestBatcher(storageKey, options) {
     this.sendRequest = options.sendRequestFunc;
     this.beforeSendHook = options.beforeSendHook;
     this.stopAllBatching = options.stopAllBatchingFunc;
+    // Instrumentation: optional delivery-metrics reporter, dependency-injected by
+    // the consumer (the fork never imports it). Invoked via reportDeliveryMetric().
+    this.deliveryMetricsReporter = options.deliveryMetricsReporter;
+    this.queueType = options.queueType;
 
     // seed variable batch size + flush interval with configured values
     this.batchSize = this.libConfig['batch_size'];
@@ -3977,6 +3983,7 @@ RequestBatcher.prototype.flush = function (options) {
                     this.queue.updatePayloads(transformedItems);
                 } else if (_utils._.isObject(res) && res.error === 'timeout' && new Date().getTime() - startTime >= timeoutMS) {
                     this.reportError('Network timeout; retrying');
+                    this.reportDeliveryMetric('retry', batch.length, 'TIMEOUT');
                     this.flush();
                 } else if (_utils._.isObject(res) && res.xhr_req && (res.xhr_req['status'] >= 500 || res.xhr_req['status'] === 429 || res.error === 'timeout')) {
                     // network or API error, or 429 Too Many Requests, retry
@@ -3990,6 +3997,7 @@ RequestBatcher.prototype.flush = function (options) {
                     }
                     retryMS = Math.min(MAX_RETRY_INTERVAL_MS, retryMS);
                     this.reportError('Error; retry in ' + retryMS + ' ms');
+                    this.reportDeliveryMetric('retry', batch.length, res.xhr_req['status'] >= 500 ? 'HTTP_5XX' : res.xhr_req['status'] === 429 ? 'HTTP_429' : 'TIMEOUT', res.xhr_req['status']);
                     this.scheduleFlush(retryMS);
                 } else if (_utils._.isObject(res) && res.xhr_req && res.xhr_req['status'] === 413) {
                     // 413 Payload Too Large
@@ -3997,15 +4005,32 @@ RequestBatcher.prototype.flush = function (options) {
                         var halvedBatchSize = Math.max(1, Math.floor(currentBatchSize / 2));
                         this.batchSize = Math.min(this.batchSize, halvedBatchSize, batch.length - 1);
                         this.reportError('413 response; reducing batch size to ' + this.batchSize);
+                        this.reportDeliveryMetric('retry', batch.length, 'PAYLOAD_TOO_LARGE_SPLIT', 413);
                         this.resetFlush();
                     } else {
                         this.reportError('Single-event request too large; dropping', batch);
+                        this.reportDeliveryMetric('drop', 1, 'PAYLOAD_TOO_LARGE', 413);
                         this.resetBatchSize();
                         removeItemsFromQueue = true;
                     }
                 } else {
-                    // successful network request+response; remove each item in batch from queue
-                    // (even if it was e.g. a 400, in which case retrying won't help)
+                    // Reached on 2xx success OR a permanent client failure (a 4xx other than
+                    // 413/429, or a status<=0). All of these remove the batch from the queue
+                    // today; classify by status for the delivery metric before removing.
+                    var respStatus = res && res.xhr_req ? res.xhr_req['status'] : undefined;
+                    if (typeof respStatus === 'number' && respStatus > 0 && respStatus < 400) {
+                        this.reportDeliveryMetric('success', batch.length, undefined, respStatus);
+                    } else if (typeof respStatus === 'number' && respStatus <= 0) {
+                        var offline = typeof navigator !== 'undefined' && navigator && navigator.onLine === false;
+                        this.reportDeliveryMetric('drop', batch.length, offline ? 'OFFLINE' : 'BLOCKED_STATUS0', respStatus);
+                    } else if (typeof respStatus === 'number' && respStatus >= 400) {
+                        this.reportDeliveryMetric('drop', batch.length, 'HTTP_4XX', respStatus);
+                    } else {
+                        // request completed with no readable status; treat as delivered
+                        this.reportDeliveryMetric('success', batch.length, undefined, respStatus);
+                    }
+                    // remove each item in batch from queue (even if it was e.g. a 400,
+                    // in which case retrying won't help)
                     removeItemsFromQueue = true;
                 }
 
@@ -4020,6 +4045,8 @@ RequestBatcher.prototype.flush = function (options) {
                                 this.reportError('Failed to remove items from queue');
                                 if (++this.consecutiveRemovalFailures > 5) {
                                     this.reportError('Too many queue failures; disabling batching system.');
+                                    // Kill-switch wipes all queues; count is approximate (this batch).
+                                    this.reportDeliveryMetric('drop', batch.length, 'KILL_SWITCH');
                                     this.stopAllBatching();
                                 } else {
                                     this.resetFlush();
@@ -4063,6 +4090,31 @@ RequestBatcher.prototype.reportError = function (msg, err) {
         } catch (err) {
             logger.error(err);
         }
+    }
+};
+
+/**
+ * Report a batch delivery outcome to the optional delivery-metrics reporter.
+ * Wrapped so a reporter error can never break the flush loop.
+ * @param {'success'|'drop'|'retry'} type
+ * @param {number} count - number of events this outcome applies to
+ * @param {string} [reason] - loss/retry reason (consumed by the reporter)
+ * @param {number} [status] - XHR status when available
+ */
+RequestBatcher.prototype.reportDeliveryMetric = function (type, count, reason, status) {
+    if (!this.deliveryMetricsReporter) {
+        return;
+    }
+    try {
+        this.deliveryMetricsReporter({
+            type: type,
+            count: count,
+            reason: reason,
+            status: status,
+            queue: this.queueType
+        });
+    } catch (err) {
+        logger.error('deliveryMetricsReporter error', err);
     }
 };
 

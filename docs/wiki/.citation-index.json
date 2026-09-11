@@ -1,0 +1,208 @@
+{
+  "built_against_sha": "19b2bed8917f",
+  "built_at": "2026-09-11T08:08:25+00:00",
+  "by_file": {
+    "examples/commonjs-browserify/package.json": {
+      "46": [
+        "docs/wiki/pages/release/build-release-cycle.md"
+      ]
+    },
+    "examples/es2015-babelify/package.json": {
+      "46": [
+        "docs/wiki/pages/release/build-release-cycle.md"
+      ]
+    },
+    "examples/umd-webpack/package.json": {
+      "46": [
+        "docs/wiki/pages/release/build-release-cycle.md"
+      ]
+    },
+    "package.json": {
+      "46": [
+        "docs/wiki/pages/release/build-release-cycle.md"
+      ]
+    },
+    "src/gdpr-utils.js": {
+      "addOptOutCheckMixpanelLib": [
+        "docs/wiki/pages/02-API-SURFACE.md",
+        "docs/wiki/pages/gdpr/opt-in-out.md"
+      ],
+      "optIn": [
+        "docs/wiki/pages/gdpr/opt-in-out.md"
+      ]
+    },
+    "src/mixpanel-core.js": {
+      "1231": [
+        "docs/wiki/pages/02-API-SURFACE.md"
+      ],
+      "1588": [
+        "docs/wiki/pages/gdpr/opt-in-out.md"
+      ],
+      "226": [
+        "docs/wiki/pages/01-OVERVIEW.md",
+        "docs/wiki/pages/02-API-SURFACE.md"
+      ],
+      "615": [
+        "docs/wiki/pages/03-EVENT-DELIVERY.md"
+      ],
+      "661": [
+        "docs/wiki/pages/batching/request-batcher.md"
+      ],
+      "713": [
+        "docs/wiki/pages/03-EVENT-DELIVERY.md"
+      ],
+      "76": [
+        "docs/wiki/pages/01-OVERVIEW.md",
+        "docs/wiki/pages/03-EVENT-DELIVERY.md",
+        "docs/wiki/pages/05-MEESHO-CUSTOMIZATIONS.md"
+      ],
+      "778": [
+        "docs/wiki/pages/01-OVERVIEW.md",
+        "docs/wiki/pages/02-API-SURFACE.md"
+      ],
+      "DEFAULT_CONFIG": [
+        "docs/wiki/pages/01-OVERVIEW.md",
+        "docs/wiki/pages/delivery-hooks/delivery-metrics-reporter.md"
+      ]
+    },
+    "src/mixpanel-group.js": {
+      "MixpanelGroup": [
+        "docs/wiki/pages/02-API-SURFACE.md"
+      ]
+    },
+    "src/mixpanel-people.js": {
+      "MixpanelPeople": [
+        "docs/wiki/pages/02-API-SURFACE.md"
+      ]
+    },
+    "src/mixpanel-persistence.js": {
+      "222": [
+        "docs/wiki/pages/04-PERSISTENCE.md"
+      ],
+      "84": [
+        "docs/wiki/pages/04-PERSISTENCE.md"
+      ],
+      "MixpanelPersistence": [
+        "docs/wiki/pages/04-PERSISTENCE.md"
+      ]
+    },
+    "src/request-batcher.js": {
+      "108": [
+        "docs/wiki/pages/01-OVERVIEW.md",
+        "docs/wiki/pages/03-EVENT-DELIVERY.md",
+        "docs/wiki/pages/batching/request-batcher.md"
+      ],
+      "225": [
+        "docs/wiki/pages/01-OVERVIEW.md",
+        "docs/wiki/pages/03-EVENT-DELIVERY.md",
+        "docs/wiki/pages/05-MEESHO-CUSTOMIZATIONS.md"
+      ],
+      "288": [
+        "docs/wiki/pages/01-OVERVIEW.md",
+        "docs/wiki/pages/03-EVENT-DELIVERY.md",
+        "docs/wiki/pages/05-MEESHO-CUSTOMIZATIONS.md",
+        "docs/wiki/pages/batching/request-batcher.md",
+        "docs/wiki/pages/delivery-hooks/delivery-metrics-reporter.md"
+      ],
+      "42": [
+        "docs/wiki/pages/batching/request-batcher.md"
+      ],
+      "91": [
+        "docs/wiki/pages/batching/request-batcher.md"
+      ],
+      "RequestBatcher": [
+        "docs/wiki/pages/05-MEESHO-CUSTOMIZATIONS.md",
+        "docs/wiki/pages/batching/request-batcher.md",
+        "docs/wiki/pages/delivery-hooks/delivery-metrics-reporter.md"
+      ]
+    },
+    "src/request-queue.js": {
+      "46": [
+        "docs/wiki/pages/04-PERSISTENCE.md",
+        "docs/wiki/pages/batching/shared-lock.md"
+      ],
+      "84": [
+        "docs/wiki/pages/03-EVENT-DELIVERY.md",
+        "docs/wiki/pages/04-PERSISTENCE.md",
+        "docs/wiki/pages/batching/shared-lock.md"
+      ]
+    },
+    "src/shared-lock.js": {
+      "SharedLock": [
+        "docs/wiki/pages/03-EVENT-DELIVERY.md",
+        "docs/wiki/pages/04-PERSISTENCE.md",
+        "docs/wiki/pages/batching/shared-lock.md"
+      ]
+    }
+  },
+  "by_page": {
+    "docs/wiki/pages/01-OVERVIEW.md": [
+      "src/mixpanel-core.js:226",
+      "src/mixpanel-core.js:76",
+      "src/mixpanel-core.js:778",
+      "src/mixpanel-core.js:DEFAULT_CONFIG",
+      "src/request-batcher.js:108",
+      "src/request-batcher.js:225",
+      "src/request-batcher.js:288"
+    ],
+    "docs/wiki/pages/02-API-SURFACE.md": [
+      "src/gdpr-utils.js:addOptOutCheckMixpanelLib",
+      "src/mixpanel-core.js:1231",
+      "src/mixpanel-core.js:226",
+      "src/mixpanel-core.js:778",
+      "src/mixpanel-group.js:MixpanelGroup",
+      "src/mixpanel-people.js:MixpanelPeople"
+    ],
+    "docs/wiki/pages/03-EVENT-DELIVERY.md": [
+      "src/mixpanel-core.js:615",
+      "src/mixpanel-core.js:713",
+      "src/mixpanel-core.js:76",
+      "src/request-batcher.js:108",
+      "src/request-batcher.js:225",
+      "src/request-batcher.js:288",
+      "src/request-queue.js:84",
+      "src/shared-lock.js:SharedLock"
+    ],
+    "docs/wiki/pages/04-PERSISTENCE.md": [
+      "src/mixpanel-persistence.js:222",
+      "src/mixpanel-persistence.js:84",
+      "src/mixpanel-persistence.js:MixpanelPersistence",
+      "src/request-queue.js:46",
+      "src/request-queue.js:84",
+      "src/shared-lock.js:SharedLock"
+    ],
+    "docs/wiki/pages/05-MEESHO-CUSTOMIZATIONS.md": [
+      "src/mixpanel-core.js:76",
+      "src/request-batcher.js:225",
+      "src/request-batcher.js:288",
+      "src/request-batcher.js:RequestBatcher"
+    ],
+    "docs/wiki/pages/batching/request-batcher.md": [
+      "src/mixpanel-core.js:661",
+      "src/request-batcher.js:108",
+      "src/request-batcher.js:288",
+      "src/request-batcher.js:42",
+      "src/request-batcher.js:91",
+      "src/request-batcher.js:RequestBatcher"
+    ],
+    "docs/wiki/pages/batching/shared-lock.md": [
+      "src/request-queue.js:46",
+      "src/request-queue.js:84",
+      "src/shared-lock.js:SharedLock"
+    ],
+    "docs/wiki/pages/delivery-hooks/delivery-metrics-reporter.md": [
+      "src/mixpanel-core.js:DEFAULT_CONFIG",
+      "src/request-batcher.js:288",
+      "src/request-batcher.js:RequestBatcher"
+    ],
+    "docs/wiki/pages/gdpr/opt-in-out.md": [
+      "src/gdpr-utils.js:addOptOutCheckMixpanelLib",
+      "src/gdpr-utils.js:optIn",
+      "src/mixpanel-core.js:1588"
+    ],
+    "docs/wiki/pages/release/build-release-cycle.md": [
+      "package.json:46"
+    ]
+  },
+  "schema_version": "v0.8.0"
+}

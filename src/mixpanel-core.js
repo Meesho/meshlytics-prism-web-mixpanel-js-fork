@@ -124,6 +124,7 @@ var DEFAULT_CONFIG = {
     'batch_flush_interval_ms':           5000,
     'batch_request_timeout_ms':          90000,
     'batch_autostart':                   true,
+    'exit_flush':                        false, // acked keepalive flush on tab-hide/unload (L1 tail-loss recovery)
     'hooks':                             {}
 };
 
@@ -264,33 +265,29 @@ MixpanelLib.prototype._init = function(token, config, name) {
             console.log('Turning off Mixpanel request-queueing; needs XHR and localStorage support');
         } else {
             this.init_batchers();
-            if (sendBeacon && window.addEventListener) {
-                // Before page closes or hides (user tabs away etc), attempt to flush any events
-                // queued up via navigator.sendBeacon. Since sendBeacon doesn't report success/failure,
-                // events will not be removed from the persistent store; if the site is loaded again,
-                // the events will be flushed again on startup and deduplicated on the Mixpanel server
-                // side.
-                // There is no reliable way to capture only page close events, so we lean on the
-                // visibilitychange and pagehide events as recommended at
-                // https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event#usage_notes.
-                // These events fire when the user clicks away from the current page/tab, so will occur
-                // more frequently than page unload, but are the only mechanism currently for capturing
-                // this scenario somewhat reliably.
-                // var flush_on_unload = _.bind(function() {
-                //     if (!this.request_batchers.events.stopped) {
-                //         this.request_batchers.events.flush({unloading: true});
-                //     }
-                // }, this);
-                // window.addEventListener('pagehide', function(ev) {
-                //     if (ev['persisted']) {
-                //         flush_on_unload();
-                //     }
-                // });
-                // window.addEventListener('visibilitychange', function() {
-                //     if (document['visibilityState'] === 'hidden') {
-                //         flush_on_unload();
-                //     }
-                // });
+            if (this.get_config('exit_flush') && window.addEventListener && typeof window.fetch === 'function') {
+                // Tail-loss recovery (L1): on tab-hide/unload, flush queued events via
+                // fetch(keepalive). Removal is acked (only on a 2xx), so this recovers
+                // most of the unload tail WITHOUT the fire-and-forget duplicate problem
+                // that got sendBeacon disabled. The hard-close-and-never-return case
+                // stays an accepted residual (recovered later by orphan recovery; needs
+                // server-side idempotency to be fully duplicate-free).
+                // visibilitychange->hidden is the reliable signal (fires on tab-away and
+                // mobile background); pagehide is a backstop. See:
+                // https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event#usage_notes
+                var flush_on_unload = _.bind(function() {
+                    if (!this.request_batchers.events.stopped) {
+                        this.request_batchers.events.flush({useKeepalive: true});
+                    }
+                }, this);
+                window.addEventListener('visibilitychange', function() {
+                    if (document['visibilityState'] === 'hidden') {
+                        flush_on_unload();
+                    }
+                });
+                window.addEventListener('pagehide', function() {
+                    flush_on_unload();
+                });
             }
         }
     }
@@ -418,6 +415,10 @@ MixpanelLib.prototype._send_request = function(url, data, options, callback) {
     }
     var use_post = options.method === 'POST';
     var use_sendBeacon = sendBeacon && use_post && options.transport.toLowerCase() === 'sendbeacon';
+    // Acked exit-flush transport: fetch with keepalive survives tab-hide/unload
+    // and still resolves with a status, so items are removed only on a 2xx.
+    var use_keepalive = use_post && options.transport && options.transport.toLowerCase() === 'keepalive' &&
+        typeof window !== 'undefined' && typeof window.fetch === 'function';
 
     // needed to correctly format responses
     var verbose_mode = options.verbose;
@@ -474,6 +475,42 @@ MixpanelLib.prototype._send_request = function(url, data, options, callback) {
         // } catch (e) {
         //     lib.report_error(e);
         // }
+    } else if (use_keepalive) {
+        // Acked exit-flush: fetch(keepalive) survives tab-hide/unload and still
+        // resolves with a status, so the batcher removes items only on a 2xx.
+        // Mirrors the XHR verbose callback contract so batchSendCallback is reused.
+        try {
+            var ka_headers = _.extend({}, this.get_config('xhr_headers'));
+            if (use_post) {
+                ka_headers['Content-Type'] = 'application/x-www-form-urlencoded';
+            }
+            window.fetch(url, {
+                method: options.method,
+                headers: ka_headers,
+                body: body_data,
+                keepalive: true,
+                credentials: 'include'
+            }).then(function(response) {
+                if (!callback) { return; }
+                if (response.ok) {
+                    // body is unused by the batcher; don't call response.json()
+                    // (extra async hop may not resolve during unload)
+                    callback(verbose_mode ? {status: 1} : 1);
+                } else {
+                    var http_err = 'Bad HTTP status: ' + response.status + ' ' + response.statusText;
+                    lib.report_error(http_err);
+                    callback(verbose_mode ? {status: 0, error: http_err, xhr_req: {status: response.status, responseHeaders: {}}} : 0);
+                }
+            })['catch'](function(fetch_err) {
+                lib.report_error(fetch_err);
+                if (callback) {
+                    callback(verbose_mode ? {status: 0, error: String(fetch_err), xhr_req: {status: 0, responseHeaders: {}}} : 0);
+                }
+            });
+        } catch (e) {
+            lib.report_error(e);
+            succeeded = false;
+        }
     } else if (USE_XHR) {
         try {
             var req = new XMLHttpRequest();

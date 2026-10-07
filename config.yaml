@@ -17,3 +17,5 @@ publish_node_package:
   package_manager: npm
   gcp_project_id: meesho-devops-admin-0622
   publish_dry_run: false
+security:
+  image-scan: true

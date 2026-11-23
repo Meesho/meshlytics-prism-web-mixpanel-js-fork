@@ -18,4 +18,4 @@ publish_node_package:
   gcp_project_id: meesho-devops-admin-0622
   publish_dry_run: false
 security:
-  trufflehog-scan: true
+  image-scan: true
